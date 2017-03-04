@@ -115,7 +115,7 @@ class Api {
 	 * Returns video object by source and video id
 	 * @param string $source
 	 * @param string $id
-	 * @return \HubtrafficApi\Video
+	 * @return \HubtrafficApi\Video|false
 	 */
 	public function getVideoBySourceAndId($source, $id) {
 		$config = $this->config[$source];
@@ -144,7 +144,7 @@ class Api {
 	 * Parses video url and returns source and video id
 	 * @param string $videoUrl
 	 * @throws UnsupportedSourceException
-	 * @return array
+	 * @return array|false
 	 */
 	private function parseUrl($videoUrl) {
 		preg_match('~(?:www\.)?([a-z0-9]+)\.[a-z]+~', parse_url($videoUrl, PHP_URL_HOST), $sourceMatches);
@@ -171,33 +171,39 @@ class Api {
 	/**
 	 * Sends request to api url and parse json result
 	 * @param string $url
-	 * @return stdClass
+	 * @return \stdClass|null
 	 */
 	private function getApiData($url) {
 		$videoData = null;
-		$c = curl_init($url);
-
-		curl_setopt($c, CURLOPT_HEADER, FALSE);
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
 
 		if ($this->proxies) {
-			foreach ($this->proxies as $proxy) {
-				curl_setopt($c, CURLOPT_PROXY, $proxy);
-				curl_setopt($c, CURLOPT_TIMEOUT, 5);
-				$result = curl_exec($c);
-				if ($result) {
-					$videoData = json_decode($result);
-					if ($videoData) {
+			$triedProxies = [];
+			while ($remainingProxies = array_diff($this->proxies, $triedProxies)) {
+				$triedProxies[] = $proxy = $remainingProxies[array_rand($remainingProxies)];
+
+				$context = stream_context_create([
+					'http' => [
+						'method' => 'GET',
+						'proxy' => 'tcp://'.$proxy,
+						'request_fulluri' => true,
+					],
+				]);
+
+				if ($result = file_get_contents($url, false, $context)) {
+					if ($decodedResult = json_decode($result)) {
+						$videoData = $decodedResult;
 						break;
 					}
 				}
 			}
 		} else {
-			$result = curl_exec($c);
-			$videoData = json_decode($result);
+			if ($result = file_get_contents($url)) {
+				if ($decodedResult = json_decode($result)) {
+					$videoData = $decodedResult;
+				}
+			}
 		}
 
-		curl_close($c);
 		return $videoData;
 	}
 
@@ -216,7 +222,6 @@ class Api {
 			throw new \Exception('Data parser class not found');
 		}
 	}
-
 
 }
 
