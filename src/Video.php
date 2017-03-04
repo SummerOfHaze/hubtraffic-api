@@ -7,7 +7,7 @@ namespace HubtrafficApi;
  * @package HubtrafficApi
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.0.0
+ * @version 1.0.1
  * 
  * @property-read string $id
  * @property-read string $source
@@ -200,7 +200,7 @@ class Video {
 	 * @param string $thumb
 	 */
 	public function removeThumb($thumb) {
-		if ($key = array_search($this->thumbs)) {
+		if ($key = array_search($thumb, $this->thumbs)) {
 			unset($this->thumbs[$key]);
 		}
 	}
@@ -231,7 +231,7 @@ class Video {
 	 * @param string $tag
 	 */
 	public function removeTag($tag) {
-		if ($key = array_search($this->tags)) {
+		if ($key = array_search($tag, $this->tags)) {
 			unset($this->tags[$key]);
 		}
 	}
@@ -262,7 +262,7 @@ class Video {
 	 * @param string $pornstar
 	 */
 	public function removePornstar($pornstar) {
-		if ($key = array_search($this->pornstars)) {
+		if ($key = array_search($pornstar, $this->pornstars)) {
 			unset($this->pornstars[$key]);
 		}
 	}

@@ -6,7 +6,7 @@ namespace HubtrafficApi;
  * DataParser interface. There are implementations of this interface for every server.
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.0.0
+ * @version 1.0.1
  * @package HubtrafficApi
  */
 interface IDataParser {

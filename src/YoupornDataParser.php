@@ -7,7 +7,7 @@ namespace HubtrafficApi;
  * Parse data from youporn api
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.0.0
+ * @version 1.0.1
  * @package HubtrafficApi
  */
 class YoupornDataParser implements IDataParser {

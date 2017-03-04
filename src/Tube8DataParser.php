@@ -7,7 +7,7 @@ namespace HubtrafficApi;
  * Parse data from tube8 api
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.0.0
+ * @version 1.0.1
  * @package HubtrafficApi
  */
 class Tube8DataParser implements IDataParser {

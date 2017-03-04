@@ -6,7 +6,7 @@ namespace HubtrafficApi;
  * Parse data from fantasti.cc api
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.0.0
+ * @version 1.0.1
  * @package HubtrafficApi
  */
 class FantastiDataParser implements IDataParser {
