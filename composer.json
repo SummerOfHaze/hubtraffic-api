@@ -1,0 +1,15 @@
+{
+    "name": "pavelplzak/hubtraffic-api",
+    "version: "1.0.1",
+    "autoload": {
+        "psr-0" : {
+            "hubtraffic-api" : "src"
+        }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/pavelplzak/hubtraffic-api"
+        }
+    ],
+}
