@@ -1,15 +1,14 @@
 {
     "name": "pavelplzak/hubtraffic-api",
+    "description": "Get video information from servers like redtube.com, pornhub.com and youporn.com",
+    "keywords": ["hubtraffic", "pornhub", "redtube", "youporn"],
     "version": "1.0.1",
+    "license": "MIT",
     "autoload": {
-        "psr-0" : {
-            "hubtraffic-api" : "src"
-        }
+        "psr-0" : {"HubtrafficApi" : "src/"}
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/pavelplzak/hubtraffic-api"
-        }
-    ]
+    "require": {
+        "php": ">=5.6.1"
+    }
 }
+
