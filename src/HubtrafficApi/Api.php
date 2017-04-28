@@ -6,7 +6,7 @@ namespace HubtrafficApi;
  * Hubtraffic api wrapper
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.0.1
+ * @version 1.0.2
  * @package HubtrafficApi
  */
 class Api {
