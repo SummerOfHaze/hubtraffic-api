@@ -7,7 +7,7 @@ namespace HubtrafficApi;
  * @package HubtrafficApi
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.0.2
+ * @version 1.0.3
  * 
  * @property-read string $id
  * @property-read string $source

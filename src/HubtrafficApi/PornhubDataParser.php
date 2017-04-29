@@ -6,7 +6,7 @@ namespace HubtrafficApi;
  * Parse data from pornhub api
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.0.2
+ * @version 1.0.3
  * @package HubtrafficApi
  */
 class PornhubDataParser implements IDataParser {

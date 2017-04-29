@@ -6,7 +6,7 @@ namespace HubtrafficApi;
  * Hubtraffic api wrapper
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.0.2
+ * @version 1.0.3
  * @package HubtrafficApi
  */
 class Api {
@@ -175,21 +175,21 @@ class Api {
 	 */
 	private function getApiData($url) {
 		$videoData = null;
+		$c = curl_init($url);
+		curl_setopt($c, CURLOPT_HEADER, FALSE);
+		curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($c, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($c, CURLOPT_TIMEOUT, 5);
 
 		if ($this->proxies) {
 			$triedProxies = [];
 			while ($remainingProxies = array_diff($this->proxies, $triedProxies)) {
 				$triedProxies[] = $proxy = $remainingProxies[array_rand($remainingProxies)];
+				curl_setopt($c, CURLOPT_PROXY, $proxy);
 
-				$context = stream_context_create([
-					'http' => [
-						'method' => 'GET',
-						'proxy' => 'tcp://'.$proxy,
-						'request_fulluri' => true,
-					],
-				]);
+				$result = curl_exec($c);
 
-				if ($result = file_get_contents($url, false, $context)) {
+				if ($result) {
 					if ($decodedResult = json_decode($result)) {
 						$videoData = $decodedResult;
 						break;
@@ -197,7 +197,8 @@ class Api {
 				}
 			}
 		} else {
-			if ($result = file_get_contents($url)) {
+			$result = curl_exec($c);
+			if ($result) {
 				if ($decodedResult = json_decode($result)) {
 					$videoData = $decodedResult;
 				}
