@@ -6,7 +6,7 @@ namespace HubtrafficApi;
  * Hubtraffic api wrapper
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.0.3
+ * @version 1.1.0
  * @package HubtrafficApi
  */
 class Api {
@@ -19,8 +19,6 @@ class Api {
 
 	const SOURCE_TUBE8 = 'tube8';
 
-	const SOURCE_FANTASTICC = 'fantasti';
-
 	const SOURCE_SPANKWIRE = 'spankwire';
 
 
@@ -32,6 +30,7 @@ class Api {
 			'url' => [
 				'video' => 'http://api.redtube.com/?data=redtube.Videos.getVideoById&output=json&thumbsize=big&video_id=',
 				'embed' => 'http://api.redtube.com/?data=redtube.Videos.getVideoEmbedCode&output=json&video_id=',
+				'active' => 'http://api.redtube.com/?data=redtube.Videos.isVideoActive&output=json&video_id=',
 			]
 		],
 		self::SOURCE_PORNHUB => [
@@ -40,6 +39,7 @@ class Api {
 			'url' => [
 				'video' => 'http://www.pornhub.com/webmasters/video_by_id?thumbsize=large_hd&id=',
 				'embed' => 'http://www.pornhub.com/webmasters/video_embed_code?id=',
+				'active' => 'http://www.pornhub.com/webmasters/is_video_active?id=',
 			]
 		],
 		self::SOURCE_YOUPORN => [
@@ -48,6 +48,7 @@ class Api {
 			'url' => [
 				'video' => 'http://www.youporn.com/api/webmasters/video_by_id/?output=json&thumbsize=big&video_id=',
 				'embed' => 'http://www.youporn.com/api/webmasters/video_embed_code/?video_id=',
+				'active' => 'http://www.youporn.com/api/webmasters/is_video_active/?video_id=',
 			]
 		],
 		self::SOURCE_TUBE8 => [
@@ -56,14 +57,7 @@ class Api {
 			'url' => [
 				'video' => 'http://api.tube8.com/api.php?action=getvideobyid&output=json&thumbsize=big&video_id=',
 				'embed' => 'http://api.tube8.com/api.php?action=getvideoembedcode&output=json&video_id=',
-			]
-		],
-		self::SOURCE_FANTASTICC => [
-			'serverName' => 'Fantasti.cc',
-			'pattern' => '/.*/([0-9]+)',
-			'url' => [
-				'video' => 'http://fantasti.cc/wm/getVideoById.json?thumbsize=big&video_id=',
-				'embed' => 'http://fantasti.cc/wm/getVideoEmbedCode.json?video_id=',
+				'active' => 'http://api.tube8.com/api.php?action=isvideoactive&output=json&video_id=',
 			]
 		],
 		self::SOURCE_SPANKWIRE => [
@@ -72,6 +66,7 @@ class Api {
 			'url' => [
 				'video' => 'http://www.spankwire.com/api/HubTrafficApiCall?data=getVideoById&thumbsize=large&output=json&video_id=',
 				'embed' => 'http://www.spankwire.com/api/HubTrafficApiCall?data=getVideoEmbedCode&output=json&video_id=',
+				'active' => 'http://www.spankwire.com/api/HubTrafficApiCall?data=isVideoActive&output=json&video_id=',
 			]
 		],
 	];
@@ -84,15 +79,30 @@ class Api {
 	 * Returns config for concrete source
 	 * @param string $source
 	 * @return array
+	 * @throws UnsupportedSourceException
 	 */
 	public function getConfig($source) {
 		if (!array_key_exists($source, $this->config)) {
-			throw new \InvalidArgumentException('Source not found');
+			throw new UnsupportedSourceException('Source not found');
 		}
 
 		return $this->config[$source];
 	}
 
+
+	/**
+	 * Returns all supported sources
+	 * @return array
+	 */
+	public function getSupportedSources() {
+		return array_keys($this->config);
+	}
+
+
+	/**
+	 * Array of proxy ips to use
+	 * @param array $proxies
+	 */
 	public function setProxies(array $proxies) {
 		$this->proxies = $proxies;
 	}
@@ -105,9 +115,9 @@ class Api {
 	 * @param string $url
 	 * @return \HubtrafficApi\Video
 	 */
-	public function getVideo($url) {
-		$details = $this->parseUrl($url);
-		return $this->getVideoBySourceAndId($details['source'], $details['videoId']);
+	public function getVideoByUrl($url) {
+		$details = $this->parseSourceAndId($url);
+		return $this->getVideo($details['source'], $details['id']);
 	}
 
 
@@ -117,8 +127,8 @@ class Api {
 	 * @param string $id
 	 * @return \HubtrafficApi\Video|false
 	 */
-	public function getVideoBySourceAndId($source, $id) {
-		$config = $this->config[$source];
+	public function getVideo($source, $id) {
+		$config = $this->getConfig($source);
 
 		$videoData = $this->getApiData($config['url']['video'] . $id);
 		if (empty($videoData->video)) {
@@ -141,12 +151,26 @@ class Api {
 
 
 	/**
+	 * Checks if video is active
+	 * @param $source
+	 * @param $id
+	 * @return bool
+	 */
+	public function isVideoActive($source, $id) {
+		$config = $this->getConfig($source);
+		$data = $this->getApiData($config['url']['active'] . $id);
+
+		return $this->getDataParser($source)->parseIsActive($data);
+	}
+
+
+	/**
 	 * Parses video url and returns source and video id
 	 * @param string $videoUrl
 	 * @throws UnsupportedSourceException
 	 * @return array|false
 	 */
-	private function parseUrl($videoUrl) {
+	public function parseSourceAndId($videoUrl) {
 		preg_match('~(?:www\.)?([a-z0-9]+)\.[a-z]+~', parse_url($videoUrl, PHP_URL_HOST), $sourceMatches);
 		$source = $sourceMatches[1];
 
@@ -158,10 +182,7 @@ class Api {
 		$videoId = $videoIdMatches[1];
 
 		if (!empty($videoId)) {
-			return [
-				'source' => $source,
-				'videoId' => $videoId,
-			];
+			return [ 'source' => $source, 'id' => $videoId ];
 		}
 
 		return false;

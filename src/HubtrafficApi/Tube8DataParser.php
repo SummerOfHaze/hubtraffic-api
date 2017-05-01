@@ -7,7 +7,7 @@ namespace HubtrafficApi;
  * Parse data from tube8 api
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.0.3
+ * @version 1.1.0
  * @package HubtrafficApi
  */
 class Tube8DataParser implements IDataParser {
@@ -43,6 +43,13 @@ class Tube8DataParser implements IDataParser {
 	 */
 	public function parseEmbedData($data) {
 		return $data[0];
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function parseIsActive($data) {
+		return isset($data->is_active) && (bool)$data->is_active;
 	}
 
 

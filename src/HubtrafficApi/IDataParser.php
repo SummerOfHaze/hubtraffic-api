@@ -6,7 +6,7 @@ namespace HubtrafficApi;
  * DataParser interface. There are implementations of this interface for every server.
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.0.3
+ * @version 1.1.0
  * @package HubtrafficApi
  */
 interface IDataParser {
@@ -25,5 +25,10 @@ interface IDataParser {
 	 */
 	public function parseEmbedData($data);
 
+	/**
+	 * @param \stdClass $data
+	 * @return bool
+	 */
+	public function parseIsActive($data);
 
 }

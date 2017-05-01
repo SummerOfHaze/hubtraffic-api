@@ -2,7 +2,7 @@
     "name": "pavelplzak/hubtraffic-api",
     "description": "Get video information from servers like redtube.com, pornhub.com and youporn.com",
     "keywords": ["hubtraffic", "pornhub", "redtube", "youporn"],
-    "version": "1.0.3",
+    "version": "1.1.0",
     "license": "MIT",
     "autoload": {
         "psr-0" : {"HubtrafficApi" : "src/"}

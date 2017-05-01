@@ -6,7 +6,7 @@ namespace HubtrafficApi;
  * Parse data from pornhub api
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.0.3
+ * @version 1.1.0
  * @package HubtrafficApi
  */
 class PornhubDataParser implements IDataParser {
@@ -48,5 +48,11 @@ class PornhubDataParser implements IDataParser {
 		return htmlspecialchars_decode($data->embed->code);
 	}
 
+	/**
+	 * @inheritdoc
+	 */
+	public function parseIsActive($data) {
+		return isset($data->active) && (bool)$data->active->is_active;
+	}
 
 }
