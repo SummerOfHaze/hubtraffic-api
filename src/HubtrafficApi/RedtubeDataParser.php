@@ -6,7 +6,7 @@ namespace HubtrafficApi;
  * Parse data from redtube api
  * @author Pavel Plzák <pavelplzak@protonmail.com>
  * @license MIT
- * @version 1.1.0
+ * @version 1.1.1
  * @package HubtrafficApi
  */
 class RedtubeDataParser implements IDataParser {
@@ -45,7 +45,8 @@ class RedtubeDataParser implements IDataParser {
 	 * @inheritdoc
 	 */
 	public function parseEmbedData($data) {
-		return base64_decode($data->embed->code);
+		$embed = base64_decode(($data->embed->code));
+		return '<iframe src="'.$embed.'" frameborder="0" width="560" height="315" scrolling="no" allowfullscreen></iframe>';
 	}
 
 	/**
