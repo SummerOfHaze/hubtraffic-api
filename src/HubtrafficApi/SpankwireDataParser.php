@@ -25,7 +25,7 @@ class SpankwireDataParser implements IDataParser {
 
 		$video->setTitle($data->video->title);
 		$video->setDuration($data->video->duration);
-		$video->setViews($data->video->views)
+		$video->setViews($data->video->views);
 
 		foreach ($data->video->thumbs as $thumb) {
 			$video->addThumb($thumb->src);
