@@ -38,6 +38,9 @@ class Video {
 
 	/** @var string */
 	private $duration;
+	
+	/** @var integer */
+	private $views;
 
 	/** @var double */
 	private $rating;
@@ -121,6 +124,14 @@ class Video {
 		$this->duration = $duration;
 	}
 
+	public function getViews($views) {
+		return $this->views;
+	}
+	
+	public function setViews($views)
+	{
+		$this->views = $views;
+	}
 
 	/**
 	 * @return float
